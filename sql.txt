@@ -1,0 +1,112 @@
+CREATE DATABASE `nova_prime` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */;
+CREATE TABLE `match_info` (
+  `gameId` varchar(45) NOT NULL,
+  `season` int(11) DEFAULT NULL,
+  `patch` varchar(45) DEFAULT NULL,
+  `duration` int(11) DEFAULT NULL,
+  `creation` datetime DEFAULT NULL,
+  PRIMARY KEY (`gameId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE TABLE `pick_bans` (
+  `gameId` varchar(45) NOT NULL,
+  `side` varchar(45) NOT NULL,
+  `pickNum` int(11) NOT NULL,
+  `champion` int(11) DEFAULT NULL,
+  `ban` tinyint(4) NOT NULL,
+  PRIMARY KEY (`gameId`,`pickNum`,`side`,`ban`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE TABLE `player_stats` (
+  `gameId` varchar(45) NOT NULL,
+  `side` varchar(45) DEFAULT NULL,
+  `parId` int(11) NOT NULL,
+  `spell1` int(11) DEFAULT NULL,
+  `spell2` int(11) DEFAULT NULL,
+  `champion` int(11) DEFAULT NULL,
+  `firstBloodKill` tinyint(4) DEFAULT NULL,
+  `firstBloodAsst` tinyint(4) DEFAULT NULL,
+  `visionScore` int(11) DEFAULT NULL,
+  `wardsPlaced` int(11) DEFAULT NULL,
+  `visionWards` int(11) DEFAULT NULL,
+  `sightWards` int(11) DEFAULT NULL,
+  `wardsKilled` int(11) DEFAULT NULL,
+  `kills` int(11) DEFAULT NULL,
+  `deaths` int(11) DEFAULT NULL,
+  `assists` int(11) DEFAULT NULL,
+  `physicalToChamps` bigint(20) DEFAULT NULL,
+  `magicToChamps` bigint(20) DEFAULT NULL,
+  `trueToChamps` bigint(20) DEFAULT NULL,
+  `totalToChamps` bigint(20) DEFAULT NULL,
+  `goldEarned` int(11) DEFAULT NULL,
+  `goldSpent` int(11) DEFAULT NULL,
+  `inhibs` int(11) DEFAULT NULL,
+  `damageToObjectives` int(11) DEFAULT NULL,
+  `damageToTowers` int(11) DEFAULT NULL,
+  `towers` int(11) DEFAULT NULL,
+  `largestKillSpree` int(11) DEFAULT NULL,
+  `laneMinions` int(11) DEFAULT NULL,
+  `enemyJungleMinions` int(11) DEFAULT NULL,
+  `ownJungleMinions` int(11) DEFAULT NULL,
+  `level` int(11) DEFAULT NULL,
+  `perk0` int(11) DEFAULT NULL,
+  `perk1` int(11) DEFAULT NULL,
+  `perk2` int(11) DEFAULT NULL,
+  `perk3` int(11) DEFAULT NULL,
+  `perk4` int(11) DEFAULT NULL,
+  `perk5` int(11) DEFAULT NULL,
+  `item0` int(11) DEFAULT NULL,
+  `item1` int(11) DEFAULT NULL,
+  `item2` int(11) DEFAULT NULL,
+  `item3` int(11) DEFAULT NULL,
+  `item4` int(11) DEFAULT NULL,
+  `item5` int(11) DEFAULT NULL,
+  `item6` int(11) DEFAULT NULL,
+  `role` varchar(45) DEFAULT NULL,
+  `lane` varchar(45) DEFAULT NULL,
+  `teamId` varchar(45) DEFAULT NULL,
+  `accountId` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`gameId`,`parId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE TABLE `player_timelines` (
+  `gameId` varchar(45) NOT NULL,
+  `parId` int(11) NOT NULL,
+  `time` varchar(45) NOT NULL,
+  `csDelta` float DEFAULT NULL,
+  `xpDelta` float DEFAULT NULL,
+  `goldDelta` float DEFAULT NULL,
+  `csDiffDelta` float DEFAULT NULL,
+  `xpDiffDelta` float DEFAULT NULL,
+  `dmgTakenDelta` float DEFAULT NULL,
+  `dmgTakenDiffDelta` float DEFAULT NULL,
+  PRIMARY KEY (`gameId`,`parId`,`time`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE TABLE `players` (
+  `name` varchar(45) NOT NULL,
+  `accountId` varchar(56) NOT NULL,
+  PRIMARY KEY (`accountId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE TABLE `team_stats` (
+  `teamId` varchar(45) DEFAULT NULL,
+  `gameId` varchar(45) NOT NULL,
+  `side` varchar(45) NOT NULL,
+  `firstDrag` tinyint(4) DEFAULT NULL,
+  `firstInhib` tinyint(4) DEFAULT NULL,
+  `barons` int(11) DEFAULT NULL,
+  `firstHerald` tinyint(4) DEFAULT NULL,
+  `firstBaron` tinyint(4) DEFAULT NULL,
+  `heralds` int(11) DEFAULT NULL,
+  `firstBlood` tinyint(4) DEFAULT NULL,
+  `firstTower` tinyint(4) DEFAULT NULL,
+  `inhibs` int(11) DEFAULT NULL,
+  `towers` int(11) DEFAULT NULL,
+  `win` varchar(45) DEFAULT NULL,
+  `drags` int(11) DEFAULT NULL,
+  PRIMARY KEY (`gameId`,`side`),
+  KEY `gameId_idx` (`gameId`),
+  CONSTRAINT `gameId` FOREIGN KEY (`gameId`) REFERENCES `match_info` (`gameId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE TABLE `teams` (
+  `teamId` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`teamId`),
+  UNIQUE KEY `name_UNIQUE` (`name`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
