@@ -3,7 +3,9 @@ import mysql.connector
 import time
 from datetime import datetime, timezone
 from database import connect_db
-API_KEY = "RGAPI-584fcec6-9cb2-453f-ac1b-1a185d46c035"
+from summoner import get_summoner_id
+from request import load_key
+API_KEY = load_key()
 
 def riot_api_call(matchId):
 	url = "https://na1.api.riotgames.com/lol/match/v4/matches/"+ matchId + "?api_key=" + API_KEY
@@ -18,7 +20,7 @@ def team_side(number):
 
 def package_data(data, blueId, redId, bluePlayerIds, redPlayerIds, blueDraft, redDraft):
 	#Match Info
-	print(data)
+	#print(data)
 	match_info = {}
 	match_info["season"] = data["seasonId"]
 	match_info["gameId"] = data["gameId"]
@@ -84,7 +86,10 @@ def package_data(data, blueId, redId, bluePlayerIds, redPlayerIds, blueDraft, re
 		100 : {
 			"TOP": { "SOLO": bluePlayerIds["TOP"]},
 			"JUNGLE": { "NONE": bluePlayerIds["JNG"]},
-			"MIDDLE": { "SOLO": bluePlayerIds["MID"]},
+			"MIDDLE": { 
+				"SOLO": bluePlayerIds["MID"],
+				"DUO_CARRY": bluePlayerIds["MID"]
+			},
 			"BOTTOM" : {
 				"DUO_CARRY": bluePlayerIds["ADC"],
 				"DUO_SUPPORT": bluePlayerIds["SUP"]
@@ -93,7 +98,10 @@ def package_data(data, blueId, redId, bluePlayerIds, redPlayerIds, blueDraft, re
 		200: {
 			"TOP": { "SOLO": redPlayerIds["TOP"]},
 			"JUNGLE": { "NONE": redPlayerIds["JNG"]},
-			"MIDDLE": { "SOLO": redPlayerIds["MID"]},
+			"MIDDLE": { 
+				"SOLO": redPlayerIds["MID"],
+				"DUO_CARRY": redPlayerIds["MID"]
+			},
 			"BOTTOM" : {
 				"DUO_CARRY": redPlayerIds["ADC"],
 				"DUO_SUPPORT": redPlayerIds["SUP"]
@@ -151,9 +159,11 @@ def package_data(data, blueId, redId, bluePlayerIds, redPlayerIds, blueDraft, re
 		temp_data["role"] = timeline_data["role"]
 		temp_data["lane"] = timeline_data["lane"]
 		temp_data["teamId"] = team_ids[player_data["teamId"]]
+		print(temp_data["lane"],temp_data["role"])
 		temp_data["accountId"] = player_ids[player_data["teamId"]][temp_data["lane"]][temp_data["role"]]
 		player_stats.append(temp_data)
 		#Player Timelines
+		print(timeline_data)
 		for x in range(0, len(timeline_data["creepsPerMinDeltas"])):
 			temp_timeline = {}
 			temp_timeline["gameId"] = str(data["gameId"])
@@ -305,12 +315,24 @@ def send_data(data):
 	db.commit()
 	return
 
+def repack_summoners(team_list):
+	team_list["TOP"] = get_summoner_id(team_list["TOP"])
+	team_list["JNG"] = get_summoner_id(team_list["JNG"])
+	team_list["MID"] = get_summoner_id(team_list["MID"])
+	team_list["ADC"] = get_summoner_id(team_list["ADC"])
+	team_list["SUP"] = get_summoner_id(team_list["SUP"])
+	#print (team_list)
+	return team_list
+
 def main(team1, team2, blueNames, redNames, blueDraft, redDraft, matchId):
 	raw_data = riot_api_call(matchId)
-	formated_data = package_data(raw_data, team1, team2, blueNames, redNames, blueDraft, redDraft)
+	print("pass")
+	formated_data = package_data(raw_data, team1, team2, repack_summoners(blueNames), repack_summoners(redNames), blueDraft, redDraft)
+	print("pass2")
 	send_data(formated_data)
+	print("fullpass")
 	return
-
+"""
 blue = {
 	"TOP": 'blueTop',
 	"JNG": 'blueJng',
@@ -328,3 +350,4 @@ red = {
 blueDraft = [1,2,3,4,5]
 redDraft = [6,7,8,9,0]
 main("team1", "team2", blue, red, blueDraft, redDraft, "3216654209")
+"""
