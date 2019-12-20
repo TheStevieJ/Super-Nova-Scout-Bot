@@ -1,41 +1,53 @@
-from __future__ import print_function
-import pickle
-import os.path
-from googleapiclient.discovery import build
-from google_auth_oauthlib.flow import InstalledAppFlow
-from google.auth.transport.requests import Request
+import gspread
+from oauth2client.service_account import ServiceAccountCredentials
+from pprint import pprint
 
-SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly']
+def package(list):
+	temp = []
+	temp.append(list[0])
+	temp.append(list[1])
+	rosters = [{},{}]
+	mod = 0
+	for team in rosters:
+		team["TOP"] = list[2 + mod]
+		team["JNG"] = list[3 + mod]
+		team["MID"] = list[4 + mod]
+		team["ADC"] = list[5 + mod]
+		team["SUP"] = list[6 + mod]
+		mod = 1
+	temp.append(rosters)
+	picks = [[],[]]
+	mod = 12
+	for side in picks:
+		for x in range(0,5):
+			side.append(list[mod + x])
+		mod = 17
+	temp.append(picks)
+	temp.append(list[22])
+	bans = [[],[]]
+	if list[23] == 'Yes':
+		mod = 24
+		for side in bans:
+			for x in range(0,5):
+				side.append(list[mod + x])
+			mod = 29
+	temp.append(bans)
+	return temp
 
-SAMPLE_SPREADSHEET_ID = '1_HvcUu2ocIeDIk-xJ76zIPBghYg-K-SzuqjYyrkeSd8'
-SAMPLE_RANGE_NAME = 'Output!A:A'
 
-def main():
-	creds = None
-	if os.path.exists('token.pickle'):
-		with open('token.pickle', 'rb') as token:
-			creds = pickle.load(token)
+def reduce_history_url(url):
+	return url.split("/")[-2]
 
-	if not creds or not creds.valid:
-		if creds and creds.expired and creds.refresh_token:
-			creds.refresh(Request())
-		else:
-			flow = InstalledAppFlow.from_client_secrets_file(
-				'credentials.json', SCOPES)
-			creds = flow.run_local_server(port=0)
 
-		with open('token.pickle', 'wb') as token:
-			pickle.dump(creds, token)
-	service = build('sheets', 'v4', credentials=creds)
-	sheet = service.spreadsheets()
-	result = sheet.values().get(spreadsheetId=SAMPLE_SPREADSHEET_ID,
-								range=SAMPLE_RANGE_NAME).execute()
-	values = result.get('values', [])
+def get_inputs():
+	scope = ['https://www.googleapis.com/auth/spreadsheets',"https://www.googleapis.com/auth/drive.file","https://www.googleapis.com/auth/drive"]
+	creds = ServiceAccountCredentials.from_json_keyfile_name("creds.json", scope)
+	client = gspread.authorize(creds)
+	sheet = client.open("SNInfo")
+	worksheet = sheet.get_worksheet(2)
+	col = worksheet.col_values(1)
+	col[22] = reduce_history_url(col[22])
+	return col
 
-	if not values:
-		print('No data found.')
-	else:
-		print('Name, Major:')
-		print(values)
 
-main()
+pprint(package(get_inputs()))
