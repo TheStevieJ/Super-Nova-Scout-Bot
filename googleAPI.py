@@ -1,7 +1,13 @@
 import gspread
+import sys
 from oauth2client.service_account import ServiceAccountCredentials
 from pprint import pprint
 
+def establish_creds():
+	scope = ['https://www.googleapis.com/auth/spreadsheets',"https://www.googleapis.com/auth/drive.file","https://www.googleapis.com/auth/drive"]
+	creds = ServiceAccountCredentials.from_json_keyfile_name("creds.json", scope)
+	client = gspread.authorize(creds)
+	return client
 
 def package(list):
 	temp = []
@@ -48,19 +54,14 @@ def reduce_history_url(url):
 	return url.split("/")[-2]
 
 
-def get_inputs():
-	scope = ['https://www.googleapis.com/auth/spreadsheets',"https://www.googleapis.com/auth/drive.file","https://www.googleapis.com/auth/drive"]
-	creds = ServiceAccountCredentials.from_json_keyfile_name("creds.json", scope)
-	client = gspread.authorize(creds)
+def get_inputs(client):
 	sheet = client.open("SNInfo")
 	worksheet = sheet.worksheet("Output")
 	col = worksheet.col_values(1)
 	return package(col)
 
-def get_summoner_list():
-	scope = ['https://www.googleapis.com/auth/spreadsheets',"https://www.googleapis.com/auth/drive.file","https://www.googleapis.com/auth/drive"]
-	creds = ServiceAccountCredentials.from_json_keyfile_name("creds.json", scope)
-	client = gspread.authorize(creds)
+
+def get_summoner_list(client):
 	sheet = client.open("SNInfo")
 	worksheet = sheet.worksheet("PlayerDB")
 	names = worksheet.col_values(1)
@@ -71,10 +72,7 @@ def get_summoner_list():
 	return end_dict
 
 
-def add_summoner_sheet(name, id):
-	scope = ['https://www.googleapis.com/auth/spreadsheets',"https://www.googleapis.com/auth/drive.file","https://www.googleapis.com/auth/drive"]
-	creds = ServiceAccountCredentials.from_json_keyfile_name("creds.json", scope)
-	client = gspread.authorize(creds)
+def add_summoner_sheet(client, name, id):
 	sheet = client.open("SNInfo")
 	worksheet = sheet.worksheet("PlayerDB")
 	row = [name, id]
@@ -82,10 +80,7 @@ def add_summoner_sheet(name, id):
 	return
 
 
-def get_team_list():
-	scope = ['https://www.googleapis.com/auth/spreadsheets',"https://www.googleapis.com/auth/drive.file","https://www.googleapis.com/auth/drive"]
-	creds = ServiceAccountCredentials.from_json_keyfile_name("creds.json", scope)
-	client = gspread.authorize(creds)
+def get_team_list(client):
 	sheet = client.open("SNInfo")
 	worksheet = sheet.worksheet("TeamDB")
 	names = worksheet.col_values(1)
@@ -96,10 +91,7 @@ def get_team_list():
 	return end_dict
 
 
-def add_team_sheet(name):
-	scope = ['https://www.googleapis.com/auth/spreadsheets',"https://www.googleapis.com/auth/drive.file","https://www.googleapis.com/auth/drive"]
-	creds = ServiceAccountCredentials.from_json_keyfile_name("creds.json", scope)
-	client = gspread.authorize(creds)
+def add_team_sheet(client, name):
 	sheet = client.open("SNInfo")
 	worksheet = sheet.worksheet("TeamDB")
 	last_id = worksheet.cell(1,2).value
@@ -108,3 +100,54 @@ def add_team_sheet(name):
 	row = [name, int(last_id) + 1]
 	worksheet.insert_row(row,1)
 	return int(last_id) + 1
+
+def get_match_list(client, id):
+	sheet = client.open("SNInfo")
+	worksheet = sheet.worksheet("RawMatch")
+	matches = worksheet.col_values(1)
+	return str(id) in matches
+
+def add_match(client, game_info, blue_id, red_id):
+	if get_match_list(client, game_info["gameId"]) is True:
+		sys.exit("Match " + str(game_info["gameId"]) + " already exisists in sheet")
+	sheet = client.open("SNInfo")
+	worksheet = sheet.worksheet("RawMatch")
+	row = [
+		game_info["gameId"],
+		blue_id,
+		red_id,
+		game_info["platformId"],
+		game_info["gameCreation"],
+		game_info["gameDuration"],
+		game_info["queueId"],
+		game_info["mapId"],
+		game_info["seasonId"],
+		game_info["gameVersion"],
+		game_info["gameMode"],
+		game_info["gameType"]
+	]
+	worksheet.insert_row(row,2)
+	return game_info["gameId"]
+
+def add_team_data(client, team_info, team_id):
+	sheet = client.open("SNInfo")
+	worksheet = sheet.worksheet("RawTeam")
+	row = [
+		team_id,
+		team_info["teamId"],
+		team_info["win"],
+		team_info["firstBlood"],
+		team_info["firstTower"],
+		team_info["firstInhibitor"],
+		team_info["firstBaron"],
+		team_info["firstDragon"],
+		team_info["firstRiftHerald"],
+		team_info["towerKills"],
+		team_info["inhibitorKills"],
+		team_info["baronKills"],
+		team_info["dragonKills"],
+		team_info["riftHeraldKills"]
+	]
+	worksheet.insert_row(row,2)
+	return
+

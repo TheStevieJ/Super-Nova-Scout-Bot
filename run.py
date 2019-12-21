@@ -1,13 +1,19 @@
-from googleAPI import get_inputs
+from googleAPI import get_inputs, establish_creds
 from new_summoner import swap_names_ids
 from new_team import swap_team_ids
 from pprint import pprint
+from riot import get_match
+from data_hub import parse_data
 
 def main():
-	in_data = get_inputs()
-	in_data[0] = swap_team_ids(in_data[0])
-	in_data[1] = swap_team_ids(in_data[1]) 
-	in_data[2] = swap_names_ids(in_data[2])
-	return in_data
+	client = establish_creds()
+	in_data = get_inputs(client)
+	in_data[0] = swap_team_ids(in_data[0], client)
+	in_data[1] = swap_team_ids(in_data[1], client) 
+	in_data[2] = swap_names_ids(in_data[2], client)
+	pprint(in_data)
+	#match_data = get_match(in_data[4])
+	#parse_data(in_data, match_data, client)
+	return
 
-pprint(main())
+main()
