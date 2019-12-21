@@ -41,7 +41,6 @@ def package(list):
 				side.append(list[x + start_index + booster])
 			booster = 5
 	temp.append(bans)
-	pprint(temp)
 	return temp
 
 
@@ -70,3 +69,42 @@ def get_summoner_list():
 	for x in range(0,len(names)):
 		end_dict[names[x]] = ids[x]
 	return end_dict
+
+
+def add_summoner_sheet(name, id):
+	scope = ['https://www.googleapis.com/auth/spreadsheets',"https://www.googleapis.com/auth/drive.file","https://www.googleapis.com/auth/drive"]
+	creds = ServiceAccountCredentials.from_json_keyfile_name("creds.json", scope)
+	client = gspread.authorize(creds)
+	sheet = client.open("SNInfo")
+	worksheet = sheet.worksheet("PlayerDB")
+	row = [name, id]
+	worksheet.insert_row(row,1)
+	return
+
+
+def get_team_list():
+	scope = ['https://www.googleapis.com/auth/spreadsheets',"https://www.googleapis.com/auth/drive.file","https://www.googleapis.com/auth/drive"]
+	creds = ServiceAccountCredentials.from_json_keyfile_name("creds.json", scope)
+	client = gspread.authorize(creds)
+	sheet = client.open("SNInfo")
+	worksheet = sheet.worksheet("TeamDB")
+	names = worksheet.col_values(1)
+	ids = worksheet.col_values(2)
+	end_dict = {}
+	for x in range(0,len(names)):
+		end_dict[names[x]] = ids[x]
+	return end_dict
+
+
+def add_team_sheet(name):
+	scope = ['https://www.googleapis.com/auth/spreadsheets',"https://www.googleapis.com/auth/drive.file","https://www.googleapis.com/auth/drive"]
+	creds = ServiceAccountCredentials.from_json_keyfile_name("creds.json", scope)
+	client = gspread.authorize(creds)
+	sheet = client.open("SNInfo")
+	worksheet = sheet.worksheet("TeamDB")
+	last_id = worksheet.cell(1,2).value
+	if last_id is "":
+		last_id = 0
+	row = [name, int(last_id) + 1]
+	worksheet.insert_row(row,1)
+	return int(last_id) + 1
