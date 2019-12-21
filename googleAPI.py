@@ -56,8 +56,7 @@ def get_inputs():
 	sheet = client.open("SNInfo")
 	worksheet = sheet.worksheet("Output")
 	col = worksheet.col_values(1)
-	#col[22] = reduce_history_url(col[22])
-	return col
+	return package(col)
 
 def get_summoner_list():
 	scope = ['https://www.googleapis.com/auth/spreadsheets',"https://www.googleapis.com/auth/drive.file","https://www.googleapis.com/auth/drive"]
@@ -71,5 +70,3 @@ def get_summoner_list():
 	for x in range(0,len(names)):
 		end_dict[names[x]] = ids[x]
 	return end_dict
-
-pprint(get_summoner_list())
