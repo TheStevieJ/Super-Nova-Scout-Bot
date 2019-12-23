@@ -129,12 +129,13 @@ def add_match(client, game_info, blue_id, red_id):
 	worksheet.insert_row(row,2)
 	return game_info["gameId"]
 
-def add_team_data(client, team_info, team_id):
+def add_team_data(match_id, client, team_info, team_id):
 	sheet = client.open("SNInfo")
 	worksheet = sheet.worksheet("RawTeam")
 	row = [
-		team_id,
+		match_id,
 		team_info["teamId"],
+		team_id,
 		team_info["win"],
 		team_info["firstBlood"],
 		team_info["firstTower"],
@@ -151,3 +152,134 @@ def add_team_data(client, team_info, team_id):
 	worksheet.insert_row(row,2)
 	return
 
+def add_player_data(match_id, client, player_info, player_id, role):
+	sheet = client.open("SNInfo")
+	worksheet = sheet.worksheet("RawPlayer")
+	stats = player_info["stats"]
+	row = [
+		match_id,
+		player_id,
+		player_info["teamId"],
+		role,
+		player_info["championId"],
+		player_info["spell1Id"],
+		player_info["spell2Id"],
+		stats["item0"],
+		stats["item1"],
+		stats["item2"],
+		stats["item3"],
+		stats["item4"],
+		stats["item5"],
+		stats["item6"],
+		stats["kills"],
+		stats["deaths"],
+		stats["assists"],
+		stats["largestKillingSpree"],
+		stats["largestMultiKill"],
+		stats["longestTimeSpentLiving"],
+		stats["doubleKills"],
+		stats["tripleKills"],
+		stats["quadraKills"],
+		stats["pentaKills"],
+		stats["totalDamageDealt"],
+		stats["magicDamageDealt"],
+		stats["physicalDamageDealt"],
+		stats["trueDamageDealt"],
+		stats["largestCriticalStrike"],
+		stats["totalDamageDealtToChampions"],
+		stats["magicDamageDealtToChampions"],
+		stats["physicalDamageDealtToChampions"],
+		stats["trueDamageDealtToChampions"],
+		stats["totalHeal"],
+		stats["totalUnitsHealed"],
+		stats["damageSelfMitigated"],
+		stats["damageDealtToObjectives"],
+		stats["damageDealtToTurrets"],
+		stats["visionScore"],
+		stats["timeCCingOthers"],
+		stats["totalDamageTaken"],
+		stats["magicalDamageTaken"],
+		stats["physicalDamageTaken"],
+		stats["trueDamageTaken"],
+		stats["goldEarned"],
+		stats["goldSpent"],
+		stats["turretKills"],
+		stats["inhibitorKills"],
+		stats["totalMinionsKilled"],
+		stats["neutralMinionsKilled"],
+		stats["neutralMinionsKilledTeamJungle"],
+		stats["neutralMinionsKilledEnemyJungle"],
+		stats["totalTimeCrowdControlDealt"],
+		stats["champLevel"],
+		stats["visionWardsBoughtInGame"],
+		stats["sightWardsBoughtInGame"],
+		stats["wardsPlaced"],
+		stats["wardsKilled"],
+		stats["firstBloodKill"],
+		stats["firstBloodAssist"],
+		stats["firstTowerKill"],
+		stats["firstTowerAssist"],
+		stats["firstInhibitorKill"],
+		stats["firstInhibitorAssist"],
+		stats["perk0"],
+		stats["perk0Var1"],
+		stats["perk0Var2"],
+		stats["perk0Var3"],
+		stats["perk1"],
+		stats["perk1Var1"],
+		stats["perk1Var2"],
+		stats["perk1Var3"],
+		stats["perk2"],
+		stats["perk2Var1"],
+		stats["perk2Var2"],
+		stats["perk2Var3"],
+		stats["perk3"],
+		stats["perk3Var1"],
+		stats["perk3Var2"],
+		stats["perk3Var3"],
+		stats["perk4"],
+		stats["perk4Var1"],
+		stats["perk4Var2"],
+		stats["perk4Var3"],
+		stats["perk5"],
+		stats["perk5Var1"],
+		stats["perk5Var2"],
+		stats["perk5Var3"],
+		stats["perkPrimaryStyle"],
+		stats["perkSubStyle"],
+		stats["statPerk0"],
+		stats["statPerk1"],
+		stats["statPerk2"]
+	]
+	worksheet.insert_row(row,2)
+	return player_id
+
+def add_time_data(match_id, player_id, client, time_info, time):
+	sheet = client.open("SNInfo")
+	worksheet = sheet.worksheet("RawTime")
+	row = [
+		match_id,
+		player_id,
+		time,
+		time_info[0],
+		time_info[1],
+		time_info[2],
+		time_info[3]
+	]
+	worksheet.insert_row(row,2)
+	return
+
+def add_pick_ban_data(match_id, client, pick_info, overall):
+	sheet = client.open("SNInfo")
+	worksheet = sheet.worksheet("RawPickBan")
+	row = [
+		match_id,
+		pick_info[0],
+		pick_info[1],
+		pick_info[2],
+		pick_info[3],
+		overall,
+		pick_info[4]
+	]
+	worksheet.insert_row(row,2)
+	return
