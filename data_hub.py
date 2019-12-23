@@ -12,18 +12,18 @@ def build_player_champ_dict(in_data):
 
 def format_pick_info(in_data, match_data):
 	picks1 = [
-		(in_data[0], in_data[3][0][0][0], 100, 1, "False"),
-		(in_data[1], in_data[3][1][0][0], 200, 1, "False"),
-		(in_data[1], in_data[3][1][1][0], 200, 2, "False"),
-		(in_data[0], in_data[3][0][1][0], 100, 2, "False"),
-		(in_data[0], in_data[3][0][2][0], 100, 3, "False"),
-		(in_data[1], in_data[3][1][2][0], 200, 3, "False")
+		(in_data[0], in_data[3][0][0][0], 100, 1, "FALSE"),
+		(in_data[1], in_data[3][1][0][0], 200, 1, "FALSE"),
+		(in_data[1], in_data[3][1][1][0], 200, 2, "FALSE"),
+		(in_data[0], in_data[3][0][1][0], 100, 2, "FALSE"),
+		(in_data[0], in_data[3][0][2][0], 100, 3, "FALSE"),
+		(in_data[1], in_data[3][1][2][0], 200, 3, "FALSE")
 	]
 	picks2 = [
-		(in_data[1], in_data[3][1][3][0], 200, 4, "False"),
-		(in_data[0], in_data[3][0][3][0], 100, 4, "False"),
-		(in_data[0], in_data[3][0][4][0], 100, 5, "False"),
-		(in_data[1], in_data[3][0][4][0], 200, 5, "False")
+		(in_data[1], in_data[3][1][3][0], 200, 4, "FALSE"),
+		(in_data[0], in_data[3][0][3][0], 100, 4, "FALSE"),
+		(in_data[0], in_data[3][0][4][0], 100, 5, "FALSE"),
+		(in_data[1], in_data[3][1][4][0], 200, 5, "FALSE")
 	]
 
 	bans1 = []
@@ -31,17 +31,17 @@ def format_pick_info(in_data, match_data):
 	if not in_data[5][0]:	
 		for x in range(0,3):
 			for y in range(0,2):
-				bans1.append((in_data[y], match_data["teams"][y]["bans"][x]["championId"], match_data["teams"][y]["teamId"], x + 1, "True"))
+				bans1.append((in_data[y], match_data["teams"][y]["bans"][x]["championId"], match_data["teams"][y]["teamId"], x + 1, "TRUE"))
 		for x in range(3,5):
 			for y in range(0,2):
-				bans2.append((in_data[y], match_data["teams"][y]["bans"][x]["championId"], match_data["teams"][y]["teamId"], x + 1, "True"))
+				bans2.append((in_data[y], match_data["teams"][y]["bans"][x]["championId"], match_data["teams"][y]["teamId"], x + 1, "TRUE"))
 	else:
 		for x in range(0,3):
 			for y in range(0,2):
-				bans1.append((in_data[y], in_data[5][y][x], (y + 1) * 100, x + 1, "True"))
+				bans1.append((in_data[y], in_data[5][y][x], (y + 1) * 100, x + 1, "TRUE"))
 		for x in range(3,5):
 			for y in range(0,2):
-				bans2.append((in_data[y], in_data[5][y][x], (y + 1) * 100, x + 1, "True"))
+				bans2.append((in_data[y], in_data[5][y][x], (y + 1) * 100, x + 1, "TRUE"))
 
 	return bans1+picks1+bans2+picks2
 
