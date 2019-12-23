@@ -11,9 +11,8 @@ def main():
 	in_data[0] = swap_team_ids(in_data[0], client)
 	in_data[1] = swap_team_ids(in_data[1], client) 
 	in_data[2] = swap_names_ids(in_data[2], client)
-	pprint(in_data)
-	#match_data = get_match(in_data[4])
-	#parse_data(in_data, match_data, client)
+	match_data = get_match(in_data[4])
+	parse_data(in_data, match_data, client)
 	return
 
 main()
