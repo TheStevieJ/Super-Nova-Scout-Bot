@@ -12,18 +12,18 @@ def build_player_champ_dict(in_data):
 
 def format_pick_info(in_data, match_data):
 	picks1 = [
-		(in_data[0], in_data[3][0][0][0], 100, 1, "FALSE"),
-		(in_data[1], in_data[3][1][0][0], 200, 1, "FALSE"),
-		(in_data[1], in_data[3][1][1][0], 200, 2, "FALSE"),
-		(in_data[0], in_data[3][0][1][0], 100, 2, "FALSE"),
-		(in_data[0], in_data[3][0][2][0], 100, 3, "FALSE"),
-		(in_data[1], in_data[3][1][2][0], 200, 3, "FALSE")
+		(int(in_data[0]), int(in_data[3][0][0][0]), 100, 1, "FALSE"),
+		(int(in_data[1]), int(in_data[3][1][0][0]), 200, 1, "FALSE"),
+		(int(in_data[1]), int(in_data[3][1][1][0]), 200, 2, "FALSE"),
+		(int(in_data[0]), int(in_data[3][0][1][0]), 100, 2, "FALSE"),
+		(int(in_data[0]), int(in_data[3][0][2][0]), 100, 3, "FALSE"),
+		(int(in_data[1]), int(in_data[3][1][2][0]), 200, 3, "FALSE")
 	]
 	picks2 = [
-		(in_data[1], in_data[3][1][3][0], 200, 4, "FALSE"),
-		(in_data[0], in_data[3][0][3][0], 100, 4, "FALSE"),
-		(in_data[0], in_data[3][0][4][0], 100, 5, "FALSE"),
-		(in_data[1], in_data[3][1][4][0], 200, 5, "FALSE")
+		(int(in_data[1]), int(in_data[3][1][3][0]), 200, 4, "FALSE"),
+		(int(in_data[0]), int(in_data[3][0][3][0]), 100, 4, "FALSE"),
+		(int(in_data[0]), int(in_data[3][0][4][0]), 100, 5, "FALSE"),
+		(int(in_data[1]), int(in_data[3][1][4][0]), 200, 5, "FALSE")
 	]
 
 	bans1 = []
@@ -31,17 +31,17 @@ def format_pick_info(in_data, match_data):
 	if not in_data[5][0]:	
 		for x in range(0,3):
 			for y in range(0,2):
-				bans1.append((in_data[y], match_data["teams"][y]["bans"][x]["championId"], match_data["teams"][y]["teamId"], x + 1, "TRUE"))
+				bans1.append((int(in_data[y]), match_data["teams"][y]["bans"][x]["championId"], match_data["teams"][y]["teamId"], x + 1, "TRUE"))
 		for x in range(3,5):
 			for y in range(0,2):
-				bans2.append((in_data[y], match_data["teams"][y]["bans"][x]["championId"], match_data["teams"][y]["teamId"], x + 1, "TRUE"))
+				bans2.append((int(in_data[y]), match_data["teams"][y]["bans"][x]["championId"], match_data["teams"][y]["teamId"], x + 1, "TRUE"))
 	else:
 		for x in range(0,3):
 			for y in range(0,2):
-				bans1.append((in_data[y], in_data[5][y][x], (y + 1) * 100, x + 1, "TRUE"))
+				bans1.append((int(in_data[y]), in_data[5][y][x], (y + 1) * 100, x + 1, "TRUE"))
 		for x in range(3,5):
 			for y in range(0,2):
-				bans2.append((in_data[y], in_data[5][y][x], (y + 1) * 100, x + 1, "TRUE"))
+				bans2.append((int(in_data[y]), in_data[5][y][x], (y + 1) * 100, x + 1, "TRUE"))
 
 	return bans1+picks1+bans2+picks2
 
@@ -73,7 +73,7 @@ def make_player_data(match_id, player_info, player_id, role):
 		match_id,
 		player_id,
 		player_info["teamId"],
-		role,
+		int(role),
 		player_info["championId"],
 		player_info["spell1Id"],
 		player_info["spell2Id"],
@@ -168,10 +168,12 @@ def make_player_data(match_id, player_info, player_id, role):
 
 
 def make_time_data(match_id, player_id, time_info, time):
+	if time == 'end':
+		time = -1
 	row = [
 		match_id,
 		player_id,
-		time,
+		int(time),
 		time_info[0],
 		time_info[1],
 		time_info[2],
@@ -209,10 +211,11 @@ def parse_data(in_data, match_data, client):
 		player_list.append(make_player_data(match_id, player, player_id, role))
 		#TODO google sheets players
 		time = player["timeline"]
-		for x in range(0, len(time["xpPerMinDeltas"])):
-			first = x * 10
-			second = (x * 10) + 10
-			time_name = str(first) + "-" + str(second)
+		time_names = list(time["xpPerMinDeltas"].keys())
+		for time_name in time_names:
+			#first = x * 10
+			#second = (x * 10) + 10
+			#time_name = str(first) + "-" + str(second)
 			time_info = [
 				time["creepsPerMinDeltas"][time_name],
 				time["xpPerMinDeltas"][time_name],
@@ -221,6 +224,7 @@ def parse_data(in_data, match_data, client):
 			]
 			name = time_name.split("-")
 			time_list.append(make_time_data(match_id, player_id, time_info, name[1]))
+	
 	add_data(client, player_list, "RawPlayer")
 	add_data(client, time_list, "RawTime")
 	pick_ban_data = format_pick_info(in_data, match_data)

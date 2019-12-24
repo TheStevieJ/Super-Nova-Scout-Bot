@@ -36,7 +36,7 @@ def package(list):
 		booster = 10
 	temp.append(picks)
 	#Match Id
-	temp.append(reduce_history_url(list[32]))
+	temp.append(int(reduce_history_url(list[32])))
 	#Bans
 	bans = [[],[]]
 	if list[33] == "Yes":
@@ -112,12 +112,12 @@ def get_match_list(client, id):
 def add_match(client, game_info, blue_id, red_id):
 	if get_match_list(client, game_info["gameId"]) is True:
 		sys.exit("Match " + str(game_info["gameId"]) + " already exisists in sheet")
-	sheet = client.open("SNInfo")
-	worksheet = sheet.worksheet("RawMatch")
+	#sheet = client.open("SNInfo")
+	#worksheet = sheet.worksheet("RawMatch")
 	row = [
 		game_info["gameId"],
-		blue_id,
-		red_id,
+		int(blue_id),
+		int(red_id),
 		game_info["platformId"],
 		game_info["gameCreation"],
 		game_info["gameDuration"],
@@ -128,8 +128,8 @@ def add_match(client, game_info, blue_id, red_id):
 		game_info["gameMode"],
 		game_info["gameType"]
 	]
-	worksheet.insert_row(row,2)
-	return game_info["gameId"]
+	add_data(client, [row], "RawMatch")
+	#return game_info["gameId"]
 
 
 def add_data(client, data, sheet_name):
