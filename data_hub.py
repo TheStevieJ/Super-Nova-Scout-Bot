@@ -31,17 +31,17 @@ def format_pick_info(in_data, match_data):
 	if not in_data[5][0]:	
 		for x in range(0,3):
 			for y in range(0,2):
-				bans1.append((int(in_data[y]), match_data["teams"][y]["bans"][x]["championId"], match_data["teams"][y]["teamId"], x + 1, "TRUE"))
+				bans1.append((int(in_data[y]), int(match_data["teams"][y]["bans"][x]["championId"]), match_data["teams"][y]["teamId"], x + 1, "TRUE"))
 		for x in range(3,5):
 			for y in range(0,2):
-				bans2.append((int(in_data[y]), match_data["teams"][y]["bans"][x]["championId"], match_data["teams"][y]["teamId"], x + 1, "TRUE"))
+				bans2.append((int(in_data[y]), int(match_data["teams"][y]["bans"][x]["championId"]), match_data["teams"][y]["teamId"], x + 1, "TRUE"))
 	else:
 		for x in range(0,3):
 			for y in range(0,2):
-				bans1.append((int(in_data[y]), in_data[5][y][x], (y + 1) * 100, x + 1, "TRUE"))
+				bans1.append((int(in_data[y]), int(in_data[5][y][x]), (y + 1) * 100, x + 1, "TRUE"))
 		for x in range(3,5):
 			for y in range(0,2):
-				bans2.append((int(in_data[y]), in_data[5][y][x], (y + 1) * 100, x + 1, "TRUE"))
+				bans2.append((int(in_data[y]), int(in_data[5][y][x]), (y + 1) * 100, x + 1, "TRUE"))
 
 	return bans1+picks1+bans2+picks2
 
