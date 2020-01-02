@@ -12,7 +12,7 @@ HOW TO SETUP:
 	If downloaded from github website/other form folder should come zipped.
 	If pulled from github repo folder should come unzipped.
 3. Double click "Install.bat" in the main folder to install required libraries.
-4. Scrim Tracker is now ready to use,
+4. Scrim Tracker is now ready to use.
 
 HOW TO RUN:
 1. Ensure that the "Input" page of the SNInfo Google Sheet is properly filled out.
@@ -29,4 +29,4 @@ POTENTIAL ERRORS/HOW TO FIX:
 	B. Riot API key is out of date, contact Stephen for new key.
 3. "'Some Number' match was already entered": A match of the same Match ID has already been uploaded, check "IndvMatchReport" to verify, if in error contact Stephen.
 
-If any other issues occur, feel free to contact Stephen Through discord (Returned#6422)
+If any other issues occur, feel free to contact Stephen Through discord (Returned#6422).
